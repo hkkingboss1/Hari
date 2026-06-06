@@ -1,0 +1,333 @@
+name=patient.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Portal - Nidan Janch Ghar</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="loginSection" class="login-container" style="display:flex;">
+
+<div class="login-box">
+
+<h2>Patient Login</h2>
+
+<form id="patientLoginForm">
+
+<input 
+type="text" 
+id="patientPhone" 
+placeholder="Mobile Number" 
+pattern="[0-9]{10}" 
+required>
+
+<input 
+type="text" 
+id="patientName" 
+placeholder="Your Name" 
+required>
+
+<button type="submit">Login</button>
+
+<p style="text-align:center; margin-top:15px; color:#666; font-size:12px;">
+Enter your mobile number and name to login
+</p>
+
+</form>
+
+</div>
+
+</div>
+
+<div id="portalSection" class="dashboard" style="display:none;">
+
+<header style="background:#0f9d58; color:white; padding:15px 8%; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+
+<div>
+<h2>Patient Portal</h2>
+<p id="patientInfo" style="font-size:14px;"></p>
+</div>
+
+<button onclick="patientLogout()" class="btn">Logout</button>
+
+</header>
+
+<div style="max-width:1000px; margin:0 auto;">
+
+<div style="background:white; padding:20px; border-radius:10px; margin-bottom:30px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Your Selected Tests</h2>
+
+<div id="selectedTestsContainer" style="background:#e8f5e9; padding:15px; border-radius:8px; min-height:80px;">
+<p style="color:#999;">No tests selected yet</p>
+</div>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px; margin-bottom:30px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Available Tests</h2>
+
+<input 
+type="text" 
+class="search-box" 
+id="patientSearchBox" 
+placeholder="Search tests..." 
+onkeyup="patientSearchTests()">
+
+<table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+
+<thead>
+<tr>
+<th style="background:#0f9d58; color:white; padding:12px; text-align:left;">Test Name</th>
+<th style="background:#0f9d58; color:white; padding:12px; text-align:left;">Price</th>
+<th style="background:#0f9d58; color:white; padding:12px; text-align:left;">Purpose</th>
+<th style="background:#0f9d58; color:white; padding:12px; text-align:center;">Select</th>
+</tr>
+</thead>
+
+<tbody id="patientTestsBody">
+
+</tbody>
+
+</table>
+
+<p style="text-align:center; color:#666; font-size:14px;">
+<strong>Note:</strong> You can select maximum 5 tests
+</p>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px; margin-bottom:30px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Download Your Report</h2>
+
+<form id="patientReportForm">
+
+<input 
+type="text" 
+id="patientReportId" 
+placeholder="Enter Report ID" 
+required>
+
+<button type="submit" class="btn">Download Report</button>
+
+</form>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Your Bookings</h2>
+
+<div id="patientBookingsContainer">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let patientSelectedTests = [];
+
+window.addEventListener('load', function() {
+  checkPatientLogin();
+  loadPatientTests();
+  loadPatientBookings();
+});
+
+// Patient Login
+document.getElementById('patientLoginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const phone = document.getElementById('patientPhone').value;
+  const name = document.getElementById('patientName').value;
+  
+  localStorage.setItem('patientLoggedIn', JSON.stringify({
+    phone: phone,
+    name: name,
+    loggedInAt: new Date().toLocaleString()
+  }));
+  
+  localStorage.setItem('patientSelectedTests_' + phone, JSON.stringify([]));
+  patientSelectedTests = [];
+  
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('portalSection').style.display = 'block';
+  document.getElementById('patientInfo').textContent = 'Welcome, ' + name + ' | Phone: ' + phone;
+});
+
+// Check if patient is logged in
+function checkPatientLogin() {
+  const patientData = JSON.parse(localStorage.getItem('patientLoggedIn'));
+  
+  if(patientData) {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('portalSection').style.display = 'block';
+    document.getElementById('patientInfo').textContent = 'Welcome, ' + patientData.name + ' | Phone: ' + patientData.phone;
+    
+    patientSelectedTests = JSON.parse(localStorage.getItem('patientSelectedTests_' + patientData.phone)) || [];
+    displaySelectedTests();
+  }
+}
+
+// Logout
+function patientLogout() {
+  localStorage.removeItem('patientLoggedIn');
+  location.reload();
+}
+
+// Load Patient Tests
+function loadPatientTests() {
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  let html = '';
+  
+  tests.forEach(test => {
+    const isSelected = patientSelectedTests.some(t => t.id === test.id);
+    html += `<tr style="background:${isSelected ? '#e8f5e9' : 'white'};">
+      <td style="padding:12px; border:1px solid #ddd;">${test.name}</td>
+      <td style="padding:12px; border:1px solid #ddd;">₹${test.price}</td>
+      <td style="padding:12px; border:1px solid #ddd;">${test.purpose}</td>
+      <td style="padding:12px; border:1px solid #ddd; text-align:center;">
+        <input 
+        type="checkbox" 
+        ${isSelected ? 'checked' : ''} 
+        onchange="toggleTestSelection(${test.id}, '${test.name}', ${test.price})">
+      </td>
+    </tr>`;
+  });
+  
+  document.getElementById('patientTestsBody').innerHTML = html;
+}
+
+function toggleTestSelection(testId, testName, testPrice) {
+  const test = {id: testId, name: testName, price: testPrice};
+  
+  if(patientSelectedTests.some(t => t.id === testId)) {
+    patientSelectedTests = patientSelectedTests.filter(t => t.id !== testId);
+  } else {
+    if(patientSelectedTests.length >= 5) {
+      alert('You can select maximum 5 tests!');
+      loadPatientTests();
+      return;
+    }
+    patientSelectedTests.push(test);
+  }
+  
+  const patientData = JSON.parse(localStorage.getItem('patientLoggedIn'));
+  localStorage.setItem('patientSelectedTests_' + patientData.phone, JSON.stringify(patientSelectedTests));
+  
+  displaySelectedTests();
+  loadPatientTests();
+}
+
+function displaySelectedTests() {
+  let html = '';
+  let totalPrice = 0;
+  
+  if(patientSelectedTests.length === 0) {
+    html = '<p style="color:#999;">No tests selected yet</p>';
+  } else {
+    html = '<ul style="list-style:none; padding:0;">';
+    patientSelectedTests.forEach(test => {
+      html += `<li style="padding:10px; margin:5px 0; background:white; border-radius:5px; display:flex; justify-content:space-between;">
+        <span>${test.name}</span>
+        <span style="font-weight:bold;">₹${test.price}</span>
+      </li>`;
+      totalPrice += test.price;
+    });
+    html += '</ul>';
+    html += `<div style="margin-top:15px; padding:15px; background:white; border-radius:5px; border:2px solid #0f9d58;">
+      <strong>Total: ₹${totalPrice}</strong> | Selected: ${patientSelectedTests.length}/5 tests
+    </div>`;
+  }
+  
+  document.getElementById('selectedTestsContainer').innerHTML = html;
+}
+
+function patientSearchTests() {
+  const input = document.getElementById('patientSearchBox').value.toLowerCase();
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  let html = '';
+  
+  tests.forEach(test => {
+    if(test.name.toLowerCase().includes(input) || test.purpose.toLowerCase().includes(input)) {
+      const isSelected = patientSelectedTests.some(t => t.id === test.id);
+      html += `<tr style="background:${isSelected ? '#e8f5e9' : 'white'};">
+        <td style="padding:12px; border:1px solid #ddd;">${test.name}</td>
+        <td style="padding:12px; border:1px solid #ddd;">₹${test.price}</td>
+        <td style="padding:12px; border:1px solid #ddd;">${test.purpose}</td>
+        <td style="padding:12px; border:1px solid #ddd; text-align:center;">
+          <input 
+          type="checkbox" 
+          ${isSelected ? 'checked' : ''} 
+          onchange="toggleTestSelection(${test.id}, '${test.name}', ${test.price})">
+        </td>
+      </tr>`;
+    }
+  });
+  
+  document.getElementById('patientTestsBody').innerHTML = html;
+}
+
+// Download Report
+document.getElementById('patientReportForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const reportId = document.getElementById('patientReportId').value;
+  const reports = JSON.parse(localStorage.getItem('reports')) || [];
+  
+  const report = reports.find(r => r.reportId === reportId);
+  
+  if(report) {
+    alert(`Report Found!\nPatient: ${report.patientName}\nTests: ${report.tests}\n\nDownloading...`);
+  } else {
+    alert('Report ID not found. Please check and try again.');
+  }
+  
+  document.getElementById('patientReportId').value = '';
+});
+
+// Load Patient Bookings
+function loadPatientBookings() {
+  const patientData = JSON.parse(localStorage.getItem('patientLoggedIn'));
+  const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+  
+  const patientBookings = bookings.filter(b => b.phone === patientData.phone);
+  
+  let html = '';
+  
+  if(patientBookings.length === 0) {
+    html = '<p style="color:#999;">No bookings yet</p>';
+  } else {
+    html = '<table style="width:100%; border-collapse:collapse;">';
+    html += '<thead><tr style="background:#0f9d58; color:white;"><th style="padding:12px; text-align:left;">Booking ID</th><th style="padding:12px; text-align:left;">Date</th><th style="padding:12px; text-align:left;">Tests</th></tr></thead>';
+    html += '<tbody>';
+    
+    patientBookings.forEach(booking => {
+      html += `<tr style="border:1px solid #ddd;">
+        <td style="padding:12px;">${booking.bookingId}</td>
+        <td style="padding:12px;">${booking.date}</td>
+        <td style="padding:12px;">${booking.tests.join(', ')}</td>
+      </tr>`;
+    });
+    
+    html += '</tbody></table>';
+  }
+  
+  document.getElementById('patientBookingsContainer').innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
