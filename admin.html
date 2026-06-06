@@ -1,0 +1,395 @@
+name=admin.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Nidan Janch Ghar</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="loginSection" class="login-container" style="display:flex;">
+
+<div class="login-box">
+
+<h2>Admin Login</h2>
+
+<form id="adminLoginForm">
+
+<input 
+type="text" 
+id="adminUsername" 
+placeholder="Username" 
+required>
+
+<input 
+type="password" 
+id="adminPassword" 
+placeholder="Password" 
+required>
+
+<button type="submit">Login</button>
+
+<p style="text-align:center; margin-top:15px; color:#666; font-size:12px;">
+Demo: Username: admin | Password: 12345
+</p>
+
+</form>
+
+</div>
+
+</div>
+
+<div id="dashboardSection" class="dashboard" style="display:none;">
+
+<div class="dashboard-header">
+
+<div>
+<h1>Admin Dashboard</h1>
+<p id="adminName"></p>
+</div>
+
+<button onclick="adminLogout()">Logout</button>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px; margin-bottom:30px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Manage Tests</h2>
+
+<button class="add-btn" onclick="openTestModal()">+ Add New Test</button>
+
+<table class="admin-table">
+
+<thead>
+<tr>
+<th>Test Name</th>
+<th>Price (₹)</th>
+<th>Purpose</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="testListBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px; margin-bottom:30px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">Upload Reports</h2>
+
+<form id="reportUploadForm">
+
+<input 
+type="text" 
+id="reportId" 
+placeholder="Report ID (e.g., REP123456)" 
+required>
+
+<input 
+type="text" 
+id="patientName" 
+placeholder="Patient Name" 
+required>
+
+<input 
+type="text" 
+id="reportTests" 
+placeholder="Tests (comma separated)" 
+required>
+
+<input 
+type="file" 
+id="reportFile" 
+accept=".pdf,.jpg,.png" 
+required>
+
+<button type="submit" class="add-btn">Upload Report</button>
+
+</form>
+
+<table class="admin-table" style="margin-top:20px;">
+
+<thead>
+<tr>
+<th>Report ID</th>
+<th>Patient Name</th>
+<th>Tests</th>
+<th>Upload Date</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="reportListBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+<div style="background:white; padding:20px; border-radius:10px;">
+
+<h2 style="color:#0f9d58; margin-bottom:20px;">All Bookings</h2>
+
+<table class="admin-table">
+
+<thead>
+<tr>
+<th>Booking ID</th>
+<th>Patient Name</th>
+<th>Phone</th>
+<th>Tests</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody id="bookingListBody">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<div id="testModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeTestModal()">&times;</span>
+
+<h2>Add/Edit Test</h2>
+
+<form id="testForm">
+
+<input 
+type="text" 
+id="testName" 
+placeholder="Test Name" 
+required>
+
+<input 
+type="number" 
+id="testPrice" 
+placeholder="Price (₹)" 
+required>
+
+<input 
+type="text" 
+id="testPurpose" 
+placeholder="Purpose" 
+required>
+
+<button type="submit" class="add-btn">Save Test</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+// Initialize
+window.addEventListener('load', function() {
+  checkAdminLogin();
+  loadTestList();
+  loadReportList();
+  loadBookingList();
+});
+
+// Admin Login
+document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const username = document.getElementById('adminUsername').value;
+  const password = document.getElementById('adminPassword').value;
+  
+  if(username === 'admin' && password === '12345') {
+    localStorage.setItem('adminLoggedIn', JSON.stringify({
+      username: username,
+      loggedInAt: new Date().toLocaleString()
+    }));
+    
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('dashboardSection').style.display = 'block';
+    document.getElementById('adminName').textContent = 'Logged in as: ' + username;
+  } else {
+    alert('Invalid username or password!');
+  }
+});
+
+// Check if admin is logged in
+function checkAdminLogin() {
+  const adminData = JSON.parse(localStorage.getItem('adminLoggedIn'));
+  
+  if(adminData) {
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('dashboardSection').style.display = 'block';
+    document.getElementById('adminName').textContent = 'Logged in as: ' + adminData.username;
+  }
+}
+
+// Logout
+function adminLogout() {
+  localStorage.removeItem('adminLoggedIn');
+  location.reload();
+}
+
+// Test Management
+let editingTestId = null;
+
+function openTestModal(testId = null) {
+  editingTestId = testId;
+  
+  if(testId) {
+    const tests = JSON.parse(localStorage.getItem('tests')) || [];
+    const test = tests.find(t => t.id === testId);
+    
+    document.getElementById('testName').value = test.name;
+    document.getElementById('testPrice').value = test.price;
+    document.getElementById('testPurpose').value = test.purpose;
+  } else {
+    document.getElementById('testForm').reset();
+  }
+  
+  document.getElementById('testModal').style.display = 'block';
+}
+
+function closeTestModal() {
+  document.getElementById('testModal').style.display = 'none';
+  editingTestId = null;
+}
+
+document.getElementById('testForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  
+  if(editingTestId) {
+    const test = tests.find(t => t.id === editingTestId);
+    test.name = document.getElementById('testName').value;
+    test.price = parseInt(document.getElementById('testPrice').value);
+    test.purpose = document.getElementById('testPurpose').value;
+  } else {
+    const newTest = {
+      id: Date.now(),
+      name: document.getElementById('testName').value,
+      price: parseInt(document.getElementById('testPrice').value),
+      purpose: document.getElementById('testPurpose').value
+    };
+    tests.push(newTest);
+  }
+  
+  localStorage.setItem('tests', JSON.stringify(tests));
+  closeTestModal();
+  loadTestList();
+  alert('Test saved successfully!');
+});
+
+function loadTestList() {
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  let html = '';
+  
+  tests.forEach(test => {
+    html += `<tr>
+      <td>${test.name}</td>
+      <td>₹${test.price}</td>
+      <td>${test.purpose}</td>
+      <td>
+        <button class="edit-btn" onclick="openTestModal(${test.id})">Edit</button>
+        <button class="delete-btn" onclick="deleteTest(${test.id})">Delete</button>
+      </td>
+    </tr>`;
+  });
+  
+  document.getElementById('testListBody').innerHTML = html;
+}
+
+function deleteTest(testId) {
+  if(confirm('Are you sure?')) {
+    const tests = JSON.parse(localStorage.getItem('tests')) || [];
+    const filtered = tests.filter(t => t.id !== testId);
+    localStorage.setItem('tests', JSON.stringify(filtered));
+    loadTestList();
+  }
+}
+
+// Report Upload
+document.getElementById('reportUploadForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const report = {
+    reportId: document.getElementById('reportId').value,
+    patientName: document.getElementById('patientName').value,
+    tests: document.getElementById('reportTests').value,
+    uploadDate: new Date().toLocaleDateString(),
+    fileSize: document.getElementById('reportFile').files[0].size
+  };
+  
+  let reports = JSON.parse(localStorage.getItem('reports')) || [];
+  reports.push(report);
+  localStorage.setItem('reports', JSON.stringify(reports));
+  
+  this.reset();
+  loadReportList();
+  alert('Report uploaded successfully!');
+});
+
+function loadReportList() {
+  const reports = JSON.parse(localStorage.getItem('reports')) || [];
+  let html = '';
+  
+  reports.forEach(report => {
+    html += `<tr>
+      <td>${report.reportId}</td>
+      <td>${report.patientName}</td>
+      <td>${report.tests}</td>
+      <td>${report.uploadDate}</td>
+      <td><button class="delete-btn" onclick="deleteReport('${report.reportId}')">Delete</button></td>
+    </tr>`;
+  });
+  
+  document.getElementById('reportListBody').innerHTML = html;
+}
+
+function deleteReport(reportId) {
+  if(confirm('Are you sure?')) {
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    const filtered = reports.filter(r => r.reportId !== reportId);
+    localStorage.setItem('reports', JSON.stringify(filtered));
+    loadReportList();
+  }
+}
+
+// Load Bookings
+function loadBookingList() {
+  const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+  let html = '';
+  
+  bookings.forEach(booking => {
+    html += `<tr>
+      <td>${booking.bookingId}</td>
+      <td>${booking.name}</td>
+      <td>${booking.phone}</td>
+      <td>${booking.tests.join(', ')}</td>
+      <td>${booking.date}</td>
+    </tr>`;
+  });
+  
+  document.getElementById('bookingListBody').innerHTML = html;
+}
+
+</script>
+
+</body>
+</html>
