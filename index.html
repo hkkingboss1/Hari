@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nidan Janch Ghar</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+Nidan Janch Ghar
+</div>
+
+<nav id="navMenu">
+<a href="#about">About</a>
+<a href="#tests">Tests</a>
+<a href="#booking">Booking</a>
+<a href="#reviews">Reviews</a>
+<a href="#download">Download Report</a>
+<a href="admin.html" class="btn-small">Admin</a>
+<a href="patient.html" class="btn-small">Patient Portal</a>
+</nav>
+
+<button class="menu-toggle" id="menuToggle">
+<i class="fas fa-bars"></i>
+</button>
+
+</header>
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>Trusted Pathology Services</h1>
+
+<p>
+Accurate Reports • Affordable Prices • Fast Service
+</p>
+
+<a href="#booking" class="btn">
+Book Test Now
+</a>
+
+</div>
+
+</section>
+
+<section id="about">
+
+<h2 class="section-title">
+About Nidan Janch Ghar
+</h2>
+
+<div class="about">
+
+<img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118">
+
+<div>
+
+<h2>Quality Diagnostic Care</h2>
+
+<br>
+
+<p>
+Nidan Janch Ghar provides reliable pathology testing services
+with modern equipment and experienced professionals.
+We focus on accuracy, affordability and patient satisfaction.
+</p>
+
+<br>
+
+<p>
+<strong>Address:</strong><br>
+Itkhori Main Road, Hazaribagh,<br>
+Chatra, Jharkhand.
+</p>
+
+<br>
+
+<p>
+<strong>Phone:</strong> 9955817776<br>
+<strong>Email:</strong> satyamgay01012000@gmail.com
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="tests">
+
+<h2 class="section-title">
+Popular Laboratory Tests
+</h2>
+
+<input
+type="text"
+id="searchInput"
+class="search-box"
+placeholder="Search any test..."
+onkeyup="searchTests()">
+
+<table id="testTable">
+
+<tr>
+<th>Test Name</th>
+<th>Price (₹)</th>
+<th>Purpose</th>
+</tr>
+
+</table>
+
+<script>
+function loadTests() {
+  const tests = JSON.parse(localStorage.getItem('tests')) || [
+    {id: 1, name: 'CBC', price: 400, purpose: 'Checks anemia and infection.'},
+    {id: 2, name: 'Blood Sugar Fasting', price: 120, purpose: 'Diabetes screening.'},
+    {id: 3, name: 'PP Blood Sugar', price: 120, purpose: 'Blood sugar after meals.'},
+    {id: 4, name: 'HbA1c', price: 500, purpose: 'Average blood sugar of 3 months.'},
+    {id: 5, name: 'Thyroid Profile', price: 700, purpose: 'Checks thyroid function.'},
+    {id: 6, name: 'Vitamin D', price: 1200, purpose: 'Bone and immunity health.'},
+    {id: 7, name: 'Vitamin B12', price: 900, purpose: 'Nerve and blood health.'},
+    {id: 8, name: 'Liver Function Test', price: 800, purpose: 'Evaluates liver health.'},
+    {id: 9, name: 'Kidney Function Test', price: 850, purpose: 'Evaluates kidney health.'},
+    {id: 10, name: 'Lipid Profile', price: 600, purpose: 'Measures cholesterol levels.'},
+    {id: 11, name: 'Urine Routine', price: 150, purpose: 'Detects urinary disorders.'},
+    {id: 12, name: 'Dengue Test', price: 700, purpose: 'Detects dengue infection.'},
+    {id: 13, name: 'Typhoid Test', price: 450, purpose: 'Detects typhoid fever.'},
+    {id: 14, name: 'Malaria Test', price: 350, purpose: 'Detects malaria infection.'},
+  ];
+  
+  let html = '<tr><th>Test Name</th><th>Price (₹)</th><th>Purpose</th></tr>';
+  tests.forEach(test => {
+    html += `<tr>
+      <td>${test.name}</td>
+      <td>${test.price}</td>
+      <td>${test.purpose}</td>
+    </tr>`;
+  });
+  
+  document.getElementById('testTable').innerHTML = html;
+}
+
+function searchTests() {
+  const input = document.getElementById('searchInput').value.toLowerCase();
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  const table = document.getElementById('testTable');
+  
+  let html = '<tr><th>Test Name</th><th>Price (₹)</th><th>Purpose</th></tr>';
+  
+  tests.forEach(test => {
+    if(test.name.toLowerCase().includes(input) || test.purpose.toLowerCase().includes(input)) {
+      html += `<tr>
+        <td>${test.name}</td>
+        <td>${test.price}</td>
+        <td>${test.purpose}</td>
+      </tr>`;
+    }
+  });
+  
+  table.innerHTML = html;
+}
+
+loadTests();
+</script>
+
+</section>
+
+
+<section>
+
+<h2 class="section-title">
+Health Information
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Low Hemoglobin</h3>
+<p>
+Can cause weakness, tiredness, dizziness and anemia.
+</p>
+</div>
+
+<div class="card">
+<h3>Low Vitamin D</h3>
+<p>
+May cause bone pain, weak muscles and poor immunity.
+</p>
+</div>
+
+<div class="card">
+<h3>Low Vitamin B12</h3>
+<p>
+Can lead to numbness, fatigue and memory problems.
+</p>
+</div>
+
+<div class="card">
+<h3>High Blood Sugar</h3>
+<p>
+May increase the risk of diabetes complications.
+</p>
+</div>
+
+<div class="card">
+<h3>High Cholesterol</h3>
+<p>
+Increases the risk of heart disease and stroke.
+</p>
+</div>
+
+<div class="card">
+<h3>Abnormal Thyroid</h3>
+<p>
+Can affect weight, energy level and mood.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+<section>
+
+<h2 class="section-title">
+Home Sample Collection
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Doorstep Collection</h3>
+<p>
+Our trained staff can collect blood and other samples from your home.
+</p>
+</div>
+
+<div class="card">
+<h3>Safe & Hygienic</h3>
+<p>
+We follow strict hygiene and safety protocols.
+</p>
+</div>
+
+<div class="card">
+<h3>Quick Reports</h3>
+<p>
+Fast processing and timely report delivery.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<section id="booking">
+
+<h2 class="section-title">
+Book Your Test
+</h2>
+
+<div id="successMessage" class="success-message">
+✓ Appointment booked successfully!
+</div>
+
+<form id="bookingForm">
+
+<input
+id="name"
+type="text"
+placeholder="Full Name"
+required>
+
+<input
+id="phone"
+type="tel"
+placeholder="Mobile Number"
+pattern="[0-9]{10}"
+title="Please enter a valid 10-digit phone number"
+required>
+
+<input
+id="email"
+type="email"
+placeholder="Email Address"
+required>
+
+<input
+id="date"
+type="date"
+required>
+
+<label>Select Tests (Max 5):</label>
+<div id="testCheckboxes" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 8px; margin: 10px 0;">
+</div>
+
+<textarea
+id="notes"
+rows="5"
+placeholder="Additional Notes"></textarea>
+
+<button type="submit" id="submitBtn">
+Book Appointment
+</button>
+
+</form>
+
+<script>
+function loadTestCheckboxes() {
+  const tests = JSON.parse(localStorage.getItem('tests')) || [];
+  let html = '';
+  tests.forEach(test => {
+    html += `<label style="display: block; margin: 8px 0;">
+      <input type="checkbox" value="${test.name}" class="testCheckbox"> ${test.name} - ₹${test.price}
+    </label>`;
+  });
+  document.getElementById('testCheckboxes').innerHTML = html;
+  
+  document.querySelectorAll('.testCheckbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const checkedCount = document.querySelectorAll('.testCheckbox:checked').length;
+      if(checkedCount > 5) {
+        this.checked = false;
+        alert('Maximum 5 tests can be selected!');
+      }
+    });
+  });
+}
+
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const selectedTests = Array.from(document.querySelectorAll('.testCheckbox:checked')).map(cb => cb.value);
+  
+  if(selectedTests.length === 0) {
+    alert('Please select at least one test!');
+    return;
+  }
+  
+  const booking = {
+    name: document.getElementById('name').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    date: document.getElementById('date').value,
+    tests: selectedTests,
+    notes: document.getElementById('notes').value,
+    bookingId: 'BK' + Date.now()
+  };
+  
+  let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+  bookings.push(booking);
+  localStorage.setItem('bookings', JSON.stringify(bookings));
+  
+  document.getElementById('successMessage').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('successMessage').style.display = 'none';
+  }, 3000);
+  
+  this.reset();
+  loadTestCheckboxes();
+});
+
+loadTestCheckboxes();
+</script>
+
+</section>
+
+
+<section id="reviews">
+
+<h2 class="section-title">
+Patient Reviews
+</h2>
+
+<form id="reviewForm" style="max-width: 600px; margin: 0 auto 30px;">
+<h3>Add Your Review</h3>
+<input type="text" id="reviewName" placeholder="Your Name" required>
+<select id="reviewRating" required>
+<option value="">Select Rating</option>
+<option value="5">★★★★★ Excellent</option>
+<option value="4">★★★★☆ Very Good</option>
+<option value="3">★★★☆☆ Good</option>
+<option value="2">★★☆☆☆ Fair</option>
+<option value="1">★☆☆☆☆ Poor</option>
+</select>
+<textarea id="reviewText" rows="4" placeholder="Your Review" required></textarea>
+<button type="submit" class="btn">Submit Review</button>
+</form>
+
+<div class="cards" id="reviewsContainer">
+
+</div>
+
+<script>
+function loadReviews() {
+  const reviews = JSON.parse(localStorage.getItem('reviews')) || [
+    {name: 'Rahul Kumar', rating: 5, text: 'Very accurate reports and friendly staff. Highly recommended.'},
+    {name: 'Priya Singh', rating: 5, text: 'Affordable prices and quick service.'},
+    {name: 'Amit Verma', rating: 5, text: 'Clean laboratory and professional team.'},
+    {name: 'Neha Sharma', rating: 5, text: 'Best pathology lab in the city. Excellent experience!'}
+  ];
+  
+  let html = '';
+  reviews.forEach(review => {
+    const stars = '★'.repeat(review.rating) + '☆'.repeat(5-review.rating);
+    html += `<div class="review">
+      <h4>${stars} ${review.name}</h4>
+      <p>${review.text}</p>
+    </div>`;
+  });
+  
+  document.getElementById('reviewsContainer').innerHTML = html;
+}
+
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const review = {
+    name: document.getElementById('reviewName').value,
+    rating: parseInt(document.getElementById('reviewRating').value),
+    text: document.getElementById('reviewText').value
+  };
+  
+  let reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+  reviews.push(review);
+  localStorage.setItem('reviews', JSON.stringify(reviews));
+  
+  this.reset();
+  loadReviews();
+  alert('Thank you for your review!');
+});
+
+loadReviews();
+</script>
+
+</section>
+
+
+<section id="download">
+
+<h2 class="section-title">
+Download Report
+</h2>
+
+<form id="reportForm">
+
+<p style="text-align: center; margin-bottom: 20px;">
+Enter your Report ID to download your report.
+</p>
+
+<input
+id="reportId"
+type="text"
+placeholder="Enter Report ID (e.g., REP123456)"
+required>
+
+<button type="submit">
+Download Report
+</button>
+
+</form>
+
+<script>
+document.getElementById('reportForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const reportId = document.getElementById('reportId').value;
+  const reports = JSON.parse(localStorage.getItem('reports')) || [];
+  
+  const report = reports.find(r => r.reportId === reportId);
+  
+  if(report) {
+    alert(`Report Found!\nPatient: ${report.patientName}\nTests: ${report.tests}\n\nDownload starting...`);
+  } else {
+    alert('Report ID not found. Please check and try again.');
+  }
+  
+  document.getElementById('reportId').value = '';
+});
+</script>
+
+</section>
+
+
+<section id="contact">
+
+<h2 class="section-title">
+Contact Us
+</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>📍 Address</h3>
+
+<p>
+Itkhori Main Road,<br>
+Hazaribagh,<br>
+Chatra,<br>
+Jharkhand
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>📞 Phone</h3>
+
+<p>
+<a href="tel:9955817776" style="color:#0f9d58; text-decoration:none; font-weight:bold;">
+9955817776
+</a>
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>📧 Email</h3>
+
+<p>
+<a href="mailto:satyamgay01012000@gmail.com" style="color:#0f9d58; text-decoration:none; font-weight:bold;">
+satyamgay01012000@gmail.com
+</a>
+</p>
+
+</div>
+
+</div>
+
+<br><br>
+
+<div id="contactSuccessMessage" class="success-message">
+✓ Message sent successfully!
+</div>
+
+<form id="contactForm">
+
+<input
+id="contactName"
+type="text"
+placeholder="Your Name"
+required>
+
+<input
+id="contactEmail"
+type="email"
+placeholder="Your Email"
+required>
+
+<textarea
+id="contactMessage"
+rows="5"
+placeholder="Your Message"
+required></textarea>
+
+<button type="submit">
+Send Message
+</button>
+
+</form>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const message = {
+    name: document.getElementById('contactName').value,
+    email: document.getElementById('contactEmail').value,
+    message: document.getElementById('contactMessage').value,
+    date: new Date().toLocaleDateString()
+  };
+  
+  let messages = JSON.parse(localStorage.getItem('messages')) || [];
+  messages.push(message);
+  localStorage.setItem('messages', JSON.stringify(messages));
+  
+  document.getElementById('contactSuccessMessage').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('contactSuccessMessage').style.display = 'none';
+  }, 3000);
+  
+  this.reset();
+});
+</script>
+
+</section>
+
+
+<section>
+
+<h2 class="section-title">
+Find Us
+</h2>
+
+<div class="card">
+
+<p>
+<strong>Nidan Janch Ghar</strong><br><br>
+Itkhori Main Road,<br>
+Hazaribagh,<br>
+Chatra,<br>
+Jharkhand
+</p>
+
+<br>
+
+<p style="color:#999; font-size:14px;">
+Google Maps location can be added when the lab is officially listed.
+</p>
+
+</div>
+
+</section>
+
+<footer>
+<p>&copy; 2024 Nidan Janch Ghar. All rights reserved.</p>
+</footer>
+
+<a
+href="https://wa.me/919955817776"
+class="whatsapp"
+target="_blank"
+title="Chat on WhatsApp">
+
+<i class="fab fa-whatsapp"></i>
+
+</a>
+
+<script>
+document.getElementById('menuToggle').addEventListener('click', function() {
+  document.getElementById('navMenu').classList.toggle('active');
+});
+</script>
+
+</body>
+</html>
